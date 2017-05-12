@@ -1,0 +1,13 @@
+# This playbook gets Swarm token and private IP address from head node
+- hosts: head
+  become: yes
+  vars:
+    iface: "{{ swarm_iface | default('eth0') }}"
+  tasks:
+    - name: retrieve swarm manager token
+      shell: docker swarm join-token -q manager
+      register: swarm_head_token
+
+
+    - debug: var=ansible_all_ipv4_addresses[1]
+      register: head_private_ip

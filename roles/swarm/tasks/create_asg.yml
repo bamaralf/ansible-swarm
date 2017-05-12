@@ -1,0 +1,69 @@
+  - name: Create Head Launch Config
+    ec2_lc:
+      name: swarm_head
+      image_id: "{{ swarm_template }}"
+      region: "{{ aws_region }}"
+      key_name: "{{ ssh_key_name }}"
+      user_data: "{{ lookup('template', '../templates/swarm-head.j2') }}"
+      security_groups: [ "{{ sg.group_id }}" ]
+      instance_type: "{{ swarm_instance_type }}"
+      volumes:
+        - device_name: /dev/sda1
+          volume_size: 10
+          delete_on_termination: true
+          encrypted: true
+    register: swarm_head_lc
+
+  - name: Create swarm head ASG
+    ec2_asg:
+      name: swarm_head_asg
+      launch_config_name: "{{ swarm_head_lc.name }}"
+      health_check_period: 60
+      health_check_type: ELB
+      replace_all_instances: yes
+      min_size: "{{ swarm_num_head }}"
+      max_size: "{{ swarm_num_head }}"
+      desired_capacity: "{{ swarm_num_head }}"
+      region: "{{ aws_region }}"
+    register: swarm_head_asg
+
+  - name: Create Node Launch Config
+    ec2_lc:
+      name: swarm_node
+      image_id: "{{ swarm_template }}"
+      region: "{{ aws_region }}"
+      key_name: "{{ ssh_key_name }}"
+      user_data: "{{ lookup('template', '../templates/swarm-node.j2') }}"
+      security_groups: [ "{{ sg.group_id }}" ]
+      instance_type: "{{ swarm_instance_type }}"
+      volumes:
+        - device_name: /dev/sda1
+          volume_size: 10
+          delete_on_termination: true
+          encrypted: true
+    register: swarm_node_lc
+
+  - name: Create swarm node ASG
+    ec2_asg:
+      name: swarm_node_asg
+      launch_config_name: "{{ swarm_node_lc.name }}"
+      health_check_period: 60
+      health_check_type: ELB
+      replace_all_instances: yes
+      min_size: "{{ swarm_num_node }}"
+      max_size: "{{ swarm_num_node }}"
+      desired_capacity: "{{ swarm_num_node }}"
+      region: "{{ aws_region }}"
+    register: swarm_node_asg
+
+  - ec2_remote_facts:
+      region: "{{ aws_region }}"
+      filters:
+        instance-id: "{{ swarm_head_asg.instances }}"
+    register: reg_head
+
+  - ec2_remote_facts:
+      region: "{{ aws_region }}"
+      filters:
+        instance-id: "{{ swarm_node_asg.instances }}"
+    register: reg_nodes

@@ -1,12 +1,13 @@
-# Swarm Cluster on AWS with Docker 1.12
+# Swarm Cluster on AWS with Docker 
 
-Docker 1.12 contains some significant changes to how Swarm cluster are created, managed and used.
 Quickly put, Swarm is now embedded in the Docker engine and provides some advanced networking features like load-balancing and virtual IPs for services.
 
-This playbook is meant as a quick way to test Docker 1.12 RC2 for #dockercon. 
+The main playbook creates a cluster of Ubuntu 16.04 LTS machines on AWS.
+Then you can init a Docker Swarm cluster.
 
-The main playbook creates a cluster of Ubuntu 15.10 machines on AWS.
-Then you can bootstrap those machines to create a Swarm cluster with the new Docker 1.12
+## Prerequisites 
+
+Docker-engine 1.12+
 
 ## Start the cluster
 
@@ -32,29 +33,6 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 52.30.66.217 | SUCCESS | rc=0 >>
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-```
-
-## Install Docker 1.12 on all your nodes 
-
-This play downloads the tarball of 1.12 and replaces the existing Docker it is a bit hackish (to say the least).
-Note that 1.12 is still in RC state.
-
-```
-$ ansible-playbook bootstrap.yml
-```
-
-After a short time, you should get back on your feet with Docker 1.12 on all your nodes
-
-```
-$ ansible swarm -b -m shell -a "docker version | grep Version"
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
- Version:      1.12.0-rc2
 ```
 
 ## Create your Swarm

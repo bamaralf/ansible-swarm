@@ -1,0 +1,28 @@
+# Created by https://www.gitignore.io/api/ansible
+# Edited by repository contributors:
+# Bruno Amaral, brunoamaralf@gmail.com
+
+### Ansible ###
+# Ansible retry files
+*.retry
+
+### Ansible conf files ###
+#ansible.cfg
+inventory
+
+### Compressed files ###
+*.zip
+*.tar.gz
+*.tgz
+
+# Test driven development on Ansible with Molecule, Testinfra and pytest
+.cache/
+.idea/
+.molecule/
+.tox/
+__pycache__/
+tests/roles
+*.pyc
+
+# End of https://www.gitignore.io/api/ansible
+
